@@ -1,6 +1,6 @@
 import streamlit as st
 from PIL import Image
-from call_image import call_openai_ai_pipeline
+from services.query_generator import call_openai_ai_pipeline
 from services.report_generator import generate_report_file
 
 # Configuração da página
