@@ -4,7 +4,7 @@ from typing import List, Dict, Optional
 from io import BytesIO
 from services.query_generator import call_openai_ai_pipeline
 from services.report_generator import generate_report_file
-from services.rag import generate_machine_specifications
+from services.rag import perform_rag
 from services.search import do_query
 from services.scraper import scrape_text_from_links
 
@@ -68,7 +68,7 @@ if st.button("Atualizar Ficha Técnica"):
         search_links = do_query(search_query)
         text_data = scrape_text_from_links(search_links)
 
-        rag_results = generate_machine_specifications(
+        rag_results = perform_rag(
             search_query,
             text_data
         )
@@ -82,7 +82,7 @@ if st.button("Atualizar Ficha Técnica"):
         manufacturer = rag_results["manufacturer"] if manufacturer is None else manufacturer
         additional_rag_details = rag_results["additional_details"]
         additional_details = {**additional_visual_details, **additional_rag_details}
-        
+
         with st.container():
             st.subheader("📋 Especificações gerais da máquina")
             st.write(f"**Nome:** {machine_name}")
