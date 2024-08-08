@@ -60,6 +60,7 @@ if st.button("Atualizar Ficha Técnica"):
         info_placeholder.info("🚀 Iniciando o processamento das imagens...")
 
         visual_results_dict: Dict = json.loads(call_openai_ai_pipeline(uploaded_files))
+        print("The visual results are: ", visual_results_dict)
 
         info_placeholder.info("🔍 Extraindo informações visuais da máquina...")
 
@@ -80,13 +81,14 @@ if st.button("Atualizar Ficha Técnica"):
         info_placeholder.info("🤖 Analisando e gerando especificações com RAG...")
 
         rag_results = json.loads(perform_rag(search_query, text_data))
+        print("The results are: ", rag_results)
 
         power = rag_results["power"] if power is None else power
         frequency = rag_results["frequency"] if frequency is None else frequency
         voltage = rag_results["voltage"] if voltage is None else voltage
         model = rag_results["model"] if model is None else model
         manufacturer = rag_results["manufacturer"] if manufacturer is None else manufacturer
-        additional_rag_details = rag_results["additional_details"]
+        additional_rag_details = rag_results["additional_details"] if additional_visual_details is None else additional_visual_details
         additional_details = {**additional_visual_details, **additional_rag_details}
 
         info_placeholder.success("✅ Especificações da máquina encontradas com sucesso!")
@@ -124,12 +126,15 @@ if st.button("Atualizar Ficha Técnica"):
             st.table(df)
 
         with st.container():
-            st.subheader("🔍 Links Complementares\n")
-            infos_to_print.append("🔍 Links Complementares")
+            st.subheader("🔍 Links Complementares")
+            infos_to_print.append("🔍 Links Complementares\n")
+            infos_to_print_fomated : List[str] = []
+            for info in infos_to_print:
+                infos_to_print_fomated.append(info.replace('**', ''))
 
             for link in search_links:
                 st.write(link)
-                infos_to_print.append(link+'\n')
+                infos_to_print_fomated.append(link+'\n')
         
 
     else:
@@ -138,7 +143,7 @@ if st.button("Atualizar Ficha Técnica"):
     st.subheader(
         "👇 Você pode baixar as especificações como um documento Word pelo botão abaixo"
     )
-    docx: bytes = generate_report_file(infos_to_print, table_to_print)
+    docx: bytes = generate_report_file(infos_to_print_fomated, table_to_print)
     st.download_button(
         "Baixar especificações como documento Word",
         docx,
