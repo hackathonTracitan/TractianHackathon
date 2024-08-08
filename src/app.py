@@ -41,31 +41,36 @@ uploaded_files = st.file_uploader("Escolha as imagens", type=["jpg", "jpeg", "pn
 if st.button("Atualizar Ficha Técnica"):
     # Exibindo informações da máquina após o botão ser pressionado
 
-    results = call_openai_ai_pipeline(uploaded_files)
+    if uploaded_files is not None:
+        results = call_openai_ai_pipeline(uploaded_files)
 
-    with st.container():
-        st.subheader("📋 Especificações da Máquina")
-        st.write(f"**Nome:** {machine_name}")
-        st.write(f"**Tipo:** {machine_type}")
-        st.write(f"**Descrição:** {machine_description}")
-        st.write("**Modelo:** Motor Elétrico Trifásico")
-        st.write("**Identificação:** 10009204")
-        st.write("**Fabricante:** WEG")
-        st.write("**Localização:** MOINHO 7")
-    # Exibindo especificações técnicas
-    with st.container():
-        st.subheader("🔧 Especificações Técnicas")
-        specs = {
-            "Potência": "40 CV (30 kW)",
-            "Tensão": "380V/660V (estimado)",
-            "Frequência": "60 Hz",
-            "Rotação": "1750 RPM (estimado)",
-            "Grau de Proteção": "IP55",
-            "Eficiência": "IE3 Premium (estimado)"
-        }
-        cols = st.columns(2)
-        for i, (key, value) in enumerate(specs.items()):
-            cols[i % 2].write(f"**{key}:** {value}")
+        with st.container():
+            st.subheader("📋 Especificações da Máquina")
+            st.write(f"**Nome:** {machine_name}")
+            st.write(f"**Tipo:** {machine_type}")
+            st.write(f"**Descrição:** {machine_description}")
+            st.write("**Modelo:** Motor Elétrico Trifásico")
+            st.write("**Identificação:** 10009204")
+            st.write("**Fabricante:** WEG")
+            st.write("**Localização:** MOINHO 7")
+            st.write(results)
+        # Exibindo especificações técnicas
+        with st.container():
+            st.subheader("🔧 Especificações Técnicas")
+            specs = {
+                "Potência": "40 CV (30 kW)",
+                "Tensão": "380V/660V (estimado)",
+                "Frequência": "60 Hz",
+                "Rotação": "1750 RPM (estimado)",
+                "Grau de Proteção": "IP55",
+                "Eficiência": "IE3 Premium (estimado)"
+            }
+            cols = st.columns(2)
+            for i, (key, value) in enumerate(specs.items()):
+                cols[i % 2].write(f"**{key}:** {value}")
+    
+    else:
+        st.error("Por favor, faça o upload de pelo menos uma imagem.")
 
     st.write(
         "👇 Você pode baixar as especificações como um documento Word pelo botão abaixo"
