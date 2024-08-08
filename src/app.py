@@ -2,8 +2,12 @@ import streamlit as st
 import json 
 from services.query_generator import call_openai_ai_pipeline
 from services.report_generator import generate_report_file
+<<<<<<< Updated upstream
 
 from services.specification_generator import generate_machine_specifications
+=======
+from services.rag import generate_machine_specifications
+>>>>>>> Stashed changes
 from services.search import do_query
 from services.scraper import scrape_text_from_links
 
@@ -55,25 +59,25 @@ if st.button("Atualizar Ficha Técnica"):
         condition = visual_results["conditions"]
         search_query = visual_results["search_query"]
         additional_visual_details = visual_results["additional_details"]
+        power = visual_results["power"],
+        frequency = visual_results["frequency"],
+        voltage = visual_results["voltage"],
+        model = visual_results["model"],
+        manufacturer = visual_results["manufacturer"]
 
         search_links = do_query(search_query)
         text_data = scrape_text_from_links(search_links)
 
         rag_results = generate_machine_specifications(
             search_query,
-            text_data,
-            visual_results["power"],
-            visual_results["frequency"],
-            visual_results["voltage"],
-            visual_results["model"],
-            visual_results["manufacturer"]
+            text_data
         )
 
-        power = rag_results["power"]
-        voltage = rag_results["voltage"]
-        frequency = rag_results["frequency"]
-        model = rag_results["model"]
-        manufacturer = rag_results["manufacturer"]
+        power = rag_results["power"] if power is None else power
+        frequency = rag_results["frequency"] if frequency is None else frequency
+        voltage = rag_results["voltage"] if voltage is None else voltage
+        model = rag_results["model"] if model is None else model
+        manufacturer = rag_results["manufacturer"] if manufacturer is None else manufacturer
         additional_rag_details = rag_results["additional_details"]
         additional_details = {**additional_visual_details, **additional_rag_details}
         with st.container():
