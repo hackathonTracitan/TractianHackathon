@@ -3,7 +3,7 @@ GENERATE_SPECIFICATION_PROMPT = """
     Eu tenho uma consulta sobre a seguinte máquina: {search_query}.
     Aqui está uma lista de informações e resultados obtidos na internet, que podem ou não estar relacionados com a máquina em questão:
     
-    {text_results}
+    {text_data}
     
     Com base nessas informações, por favor, verifique se há informações relevantes sonbre a máquina em questão e, se sim, 
     retorne as especificações técnicas da máquina. 

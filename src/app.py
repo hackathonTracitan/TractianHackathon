@@ -2,12 +2,7 @@ import streamlit as st
 import json 
 from services.query_generator import call_openai_ai_pipeline
 from services.report_generator import generate_report_file
-<<<<<<< Updated upstream
-
-from services.specification_generator import generate_machine_specifications
-=======
 from services.rag import generate_machine_specifications
->>>>>>> Stashed changes
 from services.search import do_query
 from services.scraper import scrape_text_from_links
 
@@ -68,18 +63,18 @@ if st.button("Atualizar Ficha Técnica"):
         search_links = do_query(search_query)
         text_data = scrape_text_from_links(search_links)
 
-        rag_results = generate_machine_specifications(
-            search_query,
-            text_data
-        )
+        # rag_results = generate_machine_specifications(
+        #     search_query,
+        #     text_data
+        # )
 
-        power = rag_results["power"] if power is None else power
-        frequency = rag_results["frequency"] if frequency is None else frequency
-        voltage = rag_results["voltage"] if voltage is None else voltage
-        model = rag_results["model"] if model is None else model
-        manufacturer = rag_results["manufacturer"] if manufacturer is None else manufacturer
-        additional_rag_details = rag_results["additional_details"]
-        additional_details = {**additional_visual_details, **additional_rag_details}
+        # power = rag_results["power"] if power is None else power
+        # frequency = rag_results["frequency"] if frequency is None else frequency
+        # voltage = rag_results["voltage"] if voltage is None else voltage
+        # model = rag_results["model"] if model is None else model
+        # manufacturer = rag_results["manufacturer"] if manufacturer is None else manufacturer
+        # additional_rag_details = rag_results["additional_details"]
+        # additional_details = {**additional_visual_details, **additional_rag_details}
         with st.container():
             st.subheader("📋 Especificações gerais da máquina")
             st.write(f"**Nome:** {machine_name}")
@@ -94,7 +89,7 @@ if st.button("Atualizar Ficha Técnica"):
         with st.container():
             st.subheader("🔧 Especificações Técnicas Adicionais")
             cols = st.columns(2)
-            for i, (key, value) in enumerate(additional_details.items()):
+            for i, (key, value) in enumerate(additional_visual_details.items()):
                 cols[i % 2].write(f"**{key}:** {value}")
     
     else:
