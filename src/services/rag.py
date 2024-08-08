@@ -4,8 +4,7 @@ from pydantic import BaseModel
 import os
 
 from dotenv import load_dotenv
-from ..prompts import RAG_PROMPT
-from prompts import GENERATE_SPECIFICATION_PROMPT
+from prompts import RAG_PROMPT
 
 # Carrega variáveis de ambiente do arquivo .env
 load_dotenv()
