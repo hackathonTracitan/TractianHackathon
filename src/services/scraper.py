@@ -61,7 +61,6 @@ def scrape_text_from_links(links: list) -> list:
     """
     all_texts = []
     for link in links:
-        print(f"Extraindo texto de: {link}")
         text = extract_text_from_url(link)
         all_texts.append(text)
     return all_texts

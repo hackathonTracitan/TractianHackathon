@@ -55,6 +55,4 @@ def do_query(query: str) -> list:
 
     query_result = json.loads(CONN.getresponse().read().decode("utf-8"))
 
-    print(query_result)
-
     return get_links(query_result)
