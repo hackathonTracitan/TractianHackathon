@@ -49,6 +49,9 @@ info_placeholder = st.empty()
 # Botão de atualização
 if st.button("Atualizar Ficha Técnica"):
 
+    infos_to_print: List[str] = []
+    table_to_print: pd.DataFrame = pd.DataFrame()
+
     if machine_name == "":
         st.error("Por favor, preencha o nome da máquina.")
     elif uploaded_files is not None:
@@ -106,32 +109,46 @@ if st.button("Atualizar Ficha Técnica"):
             st.write(f"**Frequência:** {frequency}")
             st.write(f"**Fabricante:** {manufacturer}")
 
+            infos_to_print = [
+                "📋 Especificações gerais da máquina\n",
+                f"**Nome:** {machine_name}\n",
+                f"**Tipo:** {machine_type}\n",
+                f"**Modelo:** {model}\n",
+                f"**Condição:** {condition}\n",
+                f"**Potência:** {power}\n",
+                f"**Tensão:** {voltage}\n",
+                f"**Frequência:** {frequency}\n",
+                f"**Fabricante:** {manufacturer}\n"
+            ]
+
             st.subheader("🔧 Especificações Técnicas Adicionais")
             
             # Convertendo o dicionário para um DataFrame do Pandas
             df = pd.DataFrame(list(additional_details.items()), columns=["Especificação", "Valor"])
-            
+            table_to_print = df
             # Exibindo a tabela
             st.table(df)
 
-            st.write("👇 Você pode baixar as especificações como um documento Word pelo botão abaixo")
-            docx: bytes = generate_report_file([
-                f"**Nome:** {machine_name}",
-                f"**Tipo:** {machine_type}",
-                f"**Modelo:** {model}",
-                f"**Condição:** {condition}",
-                f"**Potência:** {power}",
-                f"**Tensão:** {voltage}",
-                f"**Frequência:** {frequency}",
-                f"**Fabricante:** {manufacturer}"
-            ])
-            st.download_button(
-                "Baixar especificações como documento Word",
-                docx,
-                file_name="relatorio.docx",
-            )
+        with st.container():
+            st.subheader("🔍 Links Complementares\n")
+            infos_to_print.append("🔍 Links Complementares")
+
+            for link in search_links:
+                st.write(link)
+                infos_to_print.append(link+'\n')
+
     else:
         st.error("Por favor, faça o upload de pelo menos uma imagem.")
+
+    st.subheader(
+        "👇 Você pode baixar as especificações como um documento Word pelo botão abaixo"
+    )
+    docx: bytes = generate_report_file(infos_to_print, table_to_print)
+    st.download_button(
+        "Baixar especificações como documento Word",
+        docx,
+        file_name="relatorio.docx",
+    )
 
 # Rodapé
 st.markdown("<hr>", unsafe_allow_html=True)
