@@ -2,8 +2,6 @@
 
 Esse repositório foi feito para o Hackathon Tractian da SECOMP UNICAMP 2024.
 
-Você pode acessar nosso site clicando [aqui](https://tractianhackathon.streamlit.app/). É recomendado o uso de um desktop para acessar o site.
-
 ### General
 
 Este projeto é uma aplicação Streamlit para gerar e visualizar informações detalhadas sobre máquinas com base em imagens fornecidas. Ele utiliza a API OpenAI para extrair especificações de máquinas a partir das imagens e gera relatórios em formato Word para download.
@@ -22,6 +20,18 @@ Nossa solução combina a extração de informações visuais pelo GPT com dados
 ![Fluxogram](/images/diagram_hackathon.png)
 
 Utilizamos o ```gpt-4o``` como LLM em todas as chamadas. A interface foi desenvolvida com o framework Streamlit. Já a busca online foi feita a partir do serviço Serper, que disponibiliza uma API para pesquisas no Google. Já para o scraping dos websites, utilizou-se a biblioteca Beautiful Soup e pyPDF2. Por fim, a geração do relatório Word foi feita com a biblioteca docx.
+
+### Execução local
+
+Primeiramente, configure um arquivo .env na raiz do projeto com as variáveis OPENAI_API_KEY e SERPER_KEY
+
+Depois disso, para rodar o projeto, execute:
+
+```pip install -r requirements.txt```
+
+Por fim, entre no diretório src e execute:
+
+```streamlit run app.py```
 
 #### Estrutura do Projeto
 - app.py: O script principal que define a interface do usuário e lógica da aplicação Streamlit.
