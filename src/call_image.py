@@ -15,12 +15,6 @@ def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode('utf-8')
 
-# Path to your image
-image_path = "data/7ba51969-3fd4-4864-8a57-565a5045eefa.jpg"
-
-# Getting the base64 string
-base64_image = encode_image(image_path)
-
 def call_openai_api(base64_image):
     headers = {
         "Content-Type": "application/json",
@@ -28,7 +22,7 @@ def call_openai_api(base64_image):
         }
 
     payload = {
-        "model": "gpt-4o-mini",
+        "model": "gpt-4o",
         "messages": [
             {
             "role": "user",
@@ -48,11 +42,15 @@ def call_openai_api(base64_image):
             ]
             }
         ],
-        "max_tokens": 300
+        "max_tokens": 500
         }
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
-    print(response.json()['choices'][0]['message']['content'])
+    return response.json()['choices'][0]['message']['content']
 
-call_openai_api(base64_image)
+def call_openai_ai_pipeline(image_path):
+    base64_image = encode_image(image_path)
+    return call_openai_api(base64_image)
+
+print(call_openai_ai_pipeline('data/0c66f66c-97ac-4b66-98ec-550994441fd1.jpg'))
