@@ -54,13 +54,12 @@ if st.button("Atualizar Ficha Técnica"):
 
     if machine_name == "":
         st.error("Por favor, preencha o nome da máquina.")
-    elif uploaded_files is not None:
+
+    elif uploaded_files is not None and len(uploaded_files) > 0:
         
         info_placeholder.info("🚀 Iniciando o processamento das imagens...")
 
-        visual_results: str = call_openai_ai_pipeline(uploaded_files)
-        visual_results = visual_results.replace("```", "").replace("json", "")
-        visual_results_dict: Dict = json.loads(visual_results)
+        visual_results_dict: Dict = json.loads(call_openai_ai_pipeline(uploaded_files))
 
         info_placeholder.info("🔍 Extraindo informações visuais da máquina...")
 
@@ -80,12 +79,7 @@ if st.button("Atualizar Ficha Técnica"):
 
         info_placeholder.info("🤖 Analisando e gerando especificações com RAG...")
 
-        rag_results = perform_rag(
-            search_query,
-            text_data
-        )
-        rag_results = rag_results.replace("```", "").replace("json", "")
-        rag_results = json.loads(rag_results)
+        rag_results = json.loads(perform_rag(search_query, text_data))
 
         power = rag_results["power"] if power is None else power
         frequency = rag_results["frequency"] if frequency is None else frequency
@@ -136,6 +130,7 @@ if st.button("Atualizar Ficha Técnica"):
             for link in search_links:
                 st.write(link)
                 infos_to_print.append(link+'\n')
+        
 
     else:
         st.error("Por favor, faça o upload de pelo menos uma imagem.")
@@ -149,6 +144,8 @@ if st.button("Atualizar Ficha Técnica"):
         docx,
         file_name="relatorio.docx",
     )
+
+    
 
 # Rodapé
 st.markdown("<hr>", unsafe_allow_html=True)

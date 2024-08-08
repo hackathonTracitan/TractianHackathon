@@ -23,8 +23,9 @@ def perform_rag(
     response = client.chat.completions.create(
       model="gpt-4o",
       messages=[
-        {"role": "system", "content": prompt}
+        {"role": "user", "content": prompt}
       ],
+      response_format={ "type": "json_object" }
     )
 
     specifications = response.choices[0].message.content
