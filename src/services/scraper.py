@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 from io import BytesIO
 from PyPDF2 import PdfReader
-from services.search import do_query
 
 # Cabeçalhos HTTP para simular um usuário real acessando a página
 headers = {
