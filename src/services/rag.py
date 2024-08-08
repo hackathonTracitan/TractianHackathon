@@ -1,14 +1,14 @@
 from openai import OpenAI
-
 from pydantic import BaseModel
 
 import os
 
 from dotenv import load_dotenv
+from prompts import RAG_PROMPT
 
 from prompts import RAG_PROMPT
 
-# Load environment variables from .env
+# Carrega variáveis do .env
 load_dotenv()
 
 def perform_rag(
