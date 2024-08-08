@@ -36,9 +36,9 @@ st.title("📊 Informações da Máquina")
 
 st.subheader("Detalhes da Máquina")
 
-machine_name: str = st.text_input("Nome da Máquina")
+machine_name: str = st.text_input("Nome da Máquina (obrigatório)")
 machine_type: str = st.selectbox("Tipo de Máquina", ["Motor", "Compressor", "Gerador", "Bomba"])
-machine_description: str = st.text_area("Descrição da Máquina")
+machine_description: str = st.text_area("Descrição da Máquina (opcional)")
 st.subheader("Imagens da Máquina")
 uploaded_files: Optional[List[BytesIO]] = st.file_uploader("Escolha as imagens", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
@@ -47,11 +47,15 @@ if st.button("Atualizar Ficha Técnica"):
 
     infos_to_print: List[str] = []
 
+    if machine_name == "":
+        st.error("Por favor, preencha o nome da máquina.")
+
     if uploaded_files is not None:
         
         print("Starting processing")
 
         visual_results: str = call_openai_ai_pipeline(uploaded_files)
+        print("Visual results string", visual_results)
         visual_results = visual_results.replace("```", "")
         visual_results = visual_results.replace("json", "")
         visual_results_dict: Dict = json.loads(visual_results)
@@ -78,6 +82,7 @@ if st.button("Atualizar Ficha Técnica"):
         )
         rag_results = rag_results.replace("```", "")
         rag_results = rag_results.replace("json", "")
+        print(rag_results)
         rag_results = json.loads(rag_results)
 
         power = rag_results["power"] if power is None else power
