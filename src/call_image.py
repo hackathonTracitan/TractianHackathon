@@ -11,9 +11,9 @@ load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
 
 # Function to encode the image
-def encode_image(image_path):
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
+def encode_image(image):
+    image_bytes = image.getvalue()
+    return base64.b64encode(image_bytes).decode('utf-8')
 
 def call_openai_api(base64_image):
     headers = {
@@ -47,10 +47,15 @@ def call_openai_api(base64_image):
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
+    print(response.json())
+
     return response.json()['choices'][0]['message']['content']
 
-def call_openai_ai_pipeline(image_path):
-    base64_image = encode_image(image_path)
-    return call_openai_api(base64_image)
+def call_openai_ai_pipeline(images):
 
-print(call_openai_ai_pipeline('data/0c66f66c-97ac-4b66-98ec-550994441fd1.jpg'))
+    base64_images = map(encode_image, images)
+    results = []
+    for image in base64_images:
+        results.append(call_openai_api(image))
+
+    print(results)

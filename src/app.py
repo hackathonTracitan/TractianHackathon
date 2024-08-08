@@ -1,5 +1,6 @@
 import streamlit as st
 from PIL import Image
+from call_image import call_openai_ai_pipeline
 
 # Configuração da página
 st.set_page_config(page_title="Informações da Máquina", page_icon="📊", layout="wide")
@@ -38,6 +39,9 @@ uploaded_files = st.file_uploader("Escolha as imagens", type=["jpg", "jpeg", "pn
 # Botão de atualização
 if st.button("Atualizar Ficha Técnica"):
     # Exibindo informações da máquina após o botão ser pressionado
+
+    results = call_openai_ai_pipeline(uploaded_files)
+
     with st.container():
         st.subheader("📋 Especificações da Máquina")
         st.write(f"**Nome:** {machine_name}")
