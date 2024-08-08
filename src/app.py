@@ -70,7 +70,7 @@ if st.button("Atualizar Ficha Técnica"):
         
         info_placeholder.info("🚀 Iniciando o processamento das imagens...")
 
-        visual_results_dict: Dict = json.loads(call_openai_ai_pipeline(uploaded_files))
+        visual_results_dict: Dict = json.loads(call_openai_ai_pipeline(uploaded_files, machine_name))
         print("The visual results are: ", visual_results_dict)
 
         info_placeholder.info("🔍 Extraindo informações visuais da máquina...")

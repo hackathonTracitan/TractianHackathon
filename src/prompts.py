@@ -35,25 +35,26 @@ MACHINE_SPECIFICATION_PROMPT = (
     "{condicoes: 'Bom estado de funcionamento', resumo: 'Motor elétrico trifásico em bom estado de funcionamento'}"
 )
 
-SUMMARY_PROMPT = (
-    "Você é um engenheiro mecânico trabalhando em uma fábrica e recebeu a tarefa de analisar as especificações de diferentes máquinas. "
-    "Para isso, você deve examinar as imagens das máquinas e descrever cada uma delas em formato de string. Sua descrição deve incluir os seguintes detalhes:"
-    "Power: potência da máquina em CV ou HP"
-    "Voltage: tensão de operação da máquina em V"
-    "Frequency: frequência de operação da máquina em Hz"
-    "Model: modelo da máquina"
-    "Manufacturer: fabricante da máquina"
-    "Search Query: uma consulta de pesquisa para encontrar informações adicionais sobre a máquina"
-    "Conditions: condições de operação da máquina (se ela está em um bom estado de funcionamento ou não)"
-    "Por favor, forneça unicamente as informações solicitadas para cada máquina em formato JSON, por exemplo:"
+SUMMARY_PROMPT = """
+    Você é um engenheiro mecânico trabalhando em uma fábrica e recebeu a tarefa de analisar as especificações de diferentes máquinas. "
+    Para isso, você deve examinar as imagens das máquinas e descrever cada uma delas em formato de string. Sua descrição deve incluir os seguintes detalhes:"
+    Power: potência da máquina em CV ou HP"
+    Voltage: tensão de operação da máquina em V"
+    Frequency: frequência de operação da máquina em Hz"
+    Model: modelo da máquina"
+    Manufacturer: fabricante da máquina"
+    Search Query: uma consulta de pesquisa para encontrar informações adicionais sobre a máquina"
+    Conditions: condições de operação da máquina (se ela está em um bom estado de funcionamento ou não)"
+    Por favor, forneça unicamente as informações solicitadas para cada máquina em formato JSON, por exemplo:"
+    
+    {{power: '40 CV', voltage: '380V', frequency: '60 Hz', model: 'Motor Elétrico Trifásico', manufacturer: 'WEG', search_query: 'Motor Elétrico Trifásico 40 CV Modelo M733220A00, conditions: 'Bom estado de funcionamento', additional_details: {{}} }}"
+    
+    Assegure-se de que a resposta seja clara e completa, refletindo com precisão as informações extraídas das imagens das máquinas."
+    Se você não conseguir identificar algum dos detalhes solicitados, deixe obrigatoriamente o campo em branco."
+    Se existir algum detalhe adicional que você considere relevante, inclua em um dicionário separado com a chave 'additional_details' dentro do objeto JSON."
+    Escreva SOMENTE o json com as informações solicitadas, sem adicionar qualquer outro texto."
+    Todas as imagens representam uma mesma máquina com partes diferentes. Por favor, forneça as informações solicitadas para cada a máquina como um todo em formato JSON, contendo somente um objeto independnte de quantas partes a máquina possua."
+    O output deve ser entre aspas e somente isso."
 
-    "{power: '40 CV', voltage: '380V', frequency: '60 Hz', model: 'Motor Elétrico Trifásico', manufacturer: 'WEG', search_query: 'Motor Elétrico Trifásico 40 CV Modelo M733220A00, conditions: 'Bom estado de funcionamento', additional_details: {}}"
-
-    "Assegure-se de que a resposta seja clara e completa, refletindo com precisão as informações extraídas das imagens das máquinas."
-    "Se você não conseguir identificar algum dos detalhes solicitados, deixe obrigatoriamente o campo em branco."
-    "Se existir algum detalhe adicional que você considere relevante, inclua em um dicionário separado com a chave 'additional_details' dentro do objeto JSON."
-    "Escreva SOMENTE o json com as informações solicitadas, sem adicionar qualquer outro texto."
-
-    "Todas as imagens representam uma mesma máquina com partes diferentes. Por favor, forneça as informações solicitadas para cada a máquina como um todo em formato JSON, contendo somente um objeto independnte de quantas partes a máquina possua."
-    "O output deve ser entre aspas e somente isso."
-)
+    Nome da máquina analisada: {machine_name}
+"""

@@ -86,7 +86,7 @@ def call_openai_api(base64_image: str) -> Optional[str]:
 
     return get_response_openai_api(headers, payload)
 
-def summarize_results(results: List[str]) -> Optional[str]:
+def summarize_results(results: List[str], machine_name: str) -> Optional[str]:
     """
     Summarizes the results using the OpenAI API.
 
@@ -101,12 +101,14 @@ def summarize_results(results: List[str]) -> Optional[str]:
         "Authorization": f"Bearer {api_key}"
     }
 
+    prompt = SUMMARY_PROMPT.format(machine_name=machine_name) + " ".join(results)
+
     payload = {
         "model": "gpt-4o",
         "messages": [
             {
                 "role": "user",
-                "content": SUMMARY_PROMPT + " ".join(results)
+                "content": prompt
             }
         ],
         "max_tokens": 1000,
@@ -115,7 +117,7 @@ def summarize_results(results: List[str]) -> Optional[str]:
 
     return get_response_openai_api(headers, payload)
 
-def call_openai_ai_pipeline(images: List[BytesIO]) -> str:
+def call_openai_ai_pipeline(images: List[BytesIO], machine_name: str) -> str:
     """
     Processes a list of images using the OpenAI API and returns a summary.
 
@@ -134,7 +136,7 @@ def call_openai_ai_pipeline(images: List[BytesIO]) -> str:
             result = future.result()
             results.append(result)
     
-    summary = summarize_results(results)
+    summary = summarize_results(results, machine_name)
     if summary is None:
         return "Não foi possível gerar um resumo das informações."
     return summary
