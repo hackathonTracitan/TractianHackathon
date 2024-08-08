@@ -47,6 +47,7 @@ uploaded_files: Optional[List[BytesIO]] = st.file_uploader("Escolha as imagens",
 if st.button("Atualizar Ficha Técnica"):
 
     infos_to_print: List[str] = []
+    table_to_print: pd.DataFrame = pd.DataFrame()
 
     if machine_name == "":
         st.error("Por favor, preencha o nome da máquina.")
@@ -124,16 +125,25 @@ if st.button("Atualizar Ficha Técnica"):
             
             # Convertendo o dicionário para um DataFrame do Pandas
             df = pd.DataFrame(list(additional_details.items()), columns=["Especificação", "Valor"])
-            
+            table_to_print = df
             # Exibindo a tabela
             st.table(df)
+
+        with st.container():
+            st.subheader("🔍 Links Complementares\n")
+            infos_to_print.append("🔍 Links Complementares")
+
+            for link in search_links:
+                st.write(link)
+                infos_to_print.append(link+'\n')
+
     else:
         st.error("Por favor, faça o upload de pelo menos uma imagem.")
 
     st.write(
         "👇 Você pode baixar as especificações como um documento Word pelo botão abaixo"
     )
-    docx: bytes = generate_report_file(infos_to_print)
+    docx: bytes = generate_report_file(infos_to_print, table_to_print)
     st.download_button(
         "Baixar especificações como documento Word",
         docx,
