@@ -1,7 +1,8 @@
 import streamlit as st
-from PIL import Image
+import json 
 from services.query_generator import call_openai_ai_pipeline
 from services.report_generator import generate_report_file
+from services.search import do_query
 
 # Configuração da página
 st.set_page_config(page_title="Informações da Máquina", page_icon="📊", layout="wide")
@@ -43,6 +44,10 @@ if st.button("Atualizar Ficha Técnica"):
 
     if uploaded_files is not None:
         results = call_openai_ai_pipeline(uploaded_files)
+        results = results.replace("```", "")
+        results = results.replace("json", "")
+        results = json.loads(results)
+        query_result = do_query(results['search_query'])
 
         with st.container():
             st.subheader("📋 Especificações da Máquina")
@@ -54,6 +59,7 @@ if st.button("Atualizar Ficha Técnica"):
             st.write("**Fabricante:** WEG")
             st.write("**Localização:** MOINHO 7")
             st.write(results)
+            st.write(query_result)
         # Exibindo especificações técnicas
         with st.container():
             st.subheader("🔧 Especificações Técnicas")
