@@ -10,7 +10,7 @@ RAG_PROMPT = """
 
     Lembre-se de utilizar apenas as informações retornadas da internet, sem usar o seu conhecimento interno. Não retorne informações que estejam ambíguas ou que não sejam relevantes para a máquina em questão.
 
-    Por favor, forneça as informações solicitadas para cada máquina no seguinte formato JSON (o exemplo abaixo contém valores fictícios):
+    Por favor, retorne unicamente as informações solicitadas para cada máquina no seguinte formato JSON (o exemplo abaixo contém valores fictícios):
 
     {{power: '40 CV', voltage: '380V', frequency: '60 Hz', model: 'Motor Elétrico Trifásico', manufacturer: 'WEG', additional_details: {{ }} }}"
 
@@ -45,7 +45,7 @@ SUMMARY_PROMPT = (
     "Manufacturer: fabricante da máquina"
     "Search Query: uma consulta de pesquisa para encontrar informações adicionais sobre a máquina"
     "Conditions: condições de operação da máquina (se ela está em um bom estado de funcionamento ou não)"
-    "Por favor, forneça as informações solicitadas para cada máquina em formato JSON, por exemplo:"
+    "Por favor, forneça unicamente as informações solicitadas para cada máquina em formato JSON, por exemplo:"
 
     "{power: '40 CV', voltage: '380V', frequency: '60 Hz', model: 'Motor Elétrico Trifásico', manufacturer: 'WEG', search_query: 'Motor Elétrico Trifásico 40 CV Modelo M733220A00, conditions: 'Bom estado de funcionamento', additional_details: {}}"
 

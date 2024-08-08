@@ -48,10 +48,15 @@ if st.button("Atualizar Ficha Técnica"):
     infos_to_print: List[str] = []
 
     if uploaded_files is not None:
+        
+        print("Starting processing")
+
         visual_results: str = call_openai_ai_pipeline(uploaded_files)
         visual_results = visual_results.replace("```", "")
         visual_results = visual_results.replace("json", "")
         visual_results_dict: Dict = json.loads(visual_results)
+
+        print("Visual results: ", visual_results)
 
         condition: str = visual_results_dict["conditions"]
         search_query: str = visual_results_dict["search_query"]
@@ -62,11 +67,10 @@ if st.button("Atualizar Ficha Técnica"):
         model: str = visual_results_dict["model"]
         manufacturer: str = visual_results_dict["manufacturer"]
 
+        print("Search query: ", search_query)
+
         search_links: List[str] = do_query(search_query)
         text_data: str = scrape_text_from_links(search_links)
-
-        search_links = do_query(search_query)
-        text_data = scrape_text_from_links(search_links)
 
         rag_results = perform_rag(
             search_query,
@@ -74,6 +78,7 @@ if st.button("Atualizar Ficha Técnica"):
         )
         rag_results = rag_results.replace("```", "")
         rag_results = rag_results.replace("json", "")
+        rag_results = json.loads(rag_results)
 
         power = rag_results["power"] if power is None else power
         frequency = rag_results["frequency"] if frequency is None else frequency
@@ -108,7 +113,7 @@ if st.button("Atualizar Ficha Técnica"):
             st.subheader("🔧 Especificações Técnicas Adicionais")
             infos_to_print.append("🔧 Especificações Técnicas Adicionais")
             cols = st.columns(2)
-            for i, (key, value) in enumerate(additional_visual_details.items()):
+            for i, (key, value) in enumerate(additional_details.items()):
                 add_info: str = f"**{key}:** {value}"
                 cols[i % 2].write(add_info)
                 add_info += '\n'
