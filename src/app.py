@@ -43,6 +43,9 @@ uploaded_files = st.file_uploader("Escolha as imagens", type=["jpg", "jpeg", "pn
 # Botão de atualização
 if st.button("Atualizar Ficha Técnica"):
 
+    infos_to_print = []
+
+
     if uploaded_files is not None:
         visual_results = call_openai_ai_pipeline(uploaded_files)
         visual_results = visual_results.replace("```", "")
@@ -63,18 +66,6 @@ if st.button("Atualizar Ficha Técnica"):
         search_links = do_query(search_query)
         text_data = scrape_text_from_links(search_links)
 
-        # rag_results = generate_machine_specifications(
-        #     search_query,
-        #     text_data
-        # )
-
-        # power = rag_results["power"] if power is None else power
-        # frequency = rag_results["frequency"] if frequency is None else frequency
-        # voltage = rag_results["voltage"] if voltage is None else voltage
-        # model = rag_results["model"] if model is None else model
-        # manufacturer = rag_results["manufacturer"] if manufacturer is None else manufacturer
-        # additional_rag_details = rag_results["additional_details"]
-        # additional_details = {**additional_visual_details, **additional_rag_details}
         with st.container():
             st.subheader("📋 Especificações gerais da máquina")
             st.write(f"**Nome:** {machine_name}")
@@ -85,20 +76,34 @@ if st.button("Atualizar Ficha Técnica"):
             st.write(f"**Tensão:** {voltage}")
             st.write(f"**Frequência:** {frequency}")
             st.write(f"**Fabricante:** {manufacturer}")
+            
+            infos_to_print.append("📋 Especificações gerais da máquina\n")
+            infos_to_print.append(f"**Nome:** {machine_name}\n")
+            infos_to_print.append(f"**Tipo:** {machine_type}\n")
+            infos_to_print.append(f"**Modelo:** {model}\n")
+            infos_to_print.append(f"**Condição:** {condition}\n")
+            infos_to_print.append(f"**Potência:** {power}\n")
+            infos_to_print.append(f"**Tensão:** {voltage}\n")
+            infos_to_print.append(f"**Frequência:** {frequency}\n")
+            infos_to_print.append(f"**Fabricante:** {manufacturer}\n")
+
 
         with st.container():
             st.subheader("🔧 Especificações Técnicas Adicionais")
+            infos_to_print.append("🔧 Especificações Técnicas Adicionais")
             cols = st.columns(2)
             for i, (key, value) in enumerate(additional_visual_details.items()):
-                cols[i % 2].write(f"**{key}:** {value}")
-    
+                add_info = f"**{key}:** {value}"
+                cols[i % 2].write(add_info)
+                add_info +='\n'
+                infos_to_print.append(add_info)    
     else:
         st.error("Por favor, faça o upload de pelo menos uma imagem.")
 
     st.write(
         "👇 Você pode baixar as especificações como um documento Word pelo botão abaixo"
     )
-    docx = generate_report_file("teste")
+    docx = generate_report_file(infos_to_print)
     st.download_button(
         "Baixar especificações como documento Word",
         docx,
