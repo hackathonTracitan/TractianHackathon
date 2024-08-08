@@ -88,7 +88,7 @@ if st.button("Atualizar Ficha Técnica"):
         voltage = rag_results["voltage"] if voltage is None else voltage
         model = rag_results["model"] if model is None else model
         manufacturer = rag_results["manufacturer"] if manufacturer is None else manufacturer
-        additional_rag_details = rag_results["additional_details"]
+        additional_rag_details = rag_results["additional_details"] if additional_visual_details is None else additional_visual_details
         additional_details = {**additional_visual_details, **additional_rag_details}
 
         info_placeholder.success("✅ Especificações da máquina encontradas com sucesso!")
