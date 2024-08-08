@@ -2,7 +2,7 @@
 
 Esse repositório foi feito para o Hackathon Tractian da SECOMP UNICAMP 2024.
 
-Você pode acessar nosso site clicando [aqui](https://oceangardens.github.io). É recomendado o uso de um desktop para acessar o site.
+Você pode acessar nosso site clicando [aqui](https://tractianhackathon.streamlit.app/). É recomendado o uso de um desktop para acessar o site.
 
 ### Contribuidores
 
