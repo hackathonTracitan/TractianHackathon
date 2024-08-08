@@ -7,6 +7,7 @@ from services.report_generator import generate_report_file
 from services.rag import perform_rag
 from services.search import do_query
 from services.scraper import scrape_text_from_links
+import pandas as pd
 
 # Configuração da página
 st.set_page_config(page_title="Informações da Máquina", page_icon="📊", layout="wide")
@@ -49,14 +50,14 @@ if st.button("Atualizar Ficha Técnica"):
 
     if uploaded_files is not None:
         
-        print("Starting processing")
+        st.info("🚀 Iniciando o processamento das imagens...")
 
         visual_results: str = call_openai_ai_pipeline(uploaded_files)
         visual_results = visual_results.replace("```", "")
         visual_results = visual_results.replace("json", "")
         visual_results_dict: Dict = json.loads(visual_results)
 
-        print("Visual results: ", visual_results)
+        st.info("🔍 Extraindo informações visuais da máquina...")
 
         condition: str = visual_results_dict["conditions"]
         search_query: str = visual_results_dict["search_query"]
@@ -67,10 +68,12 @@ if st.button("Atualizar Ficha Técnica"):
         model: str = visual_results_dict["model"]
         manufacturer: str = visual_results_dict["manufacturer"]
 
-        print("Search query: ", search_query)
+        st.info("🌐 Realizando pesquisa online para informações adicionais...")
 
         search_links: List[str] = do_query(search_query)
         text_data: str = scrape_text_from_links(search_links)
+
+        st.info("🤖 Analisando e gerando especificações com RAG...")
 
         rag_results = perform_rag(
             search_query,
@@ -87,6 +90,8 @@ if st.button("Atualizar Ficha Técnica"):
         manufacturer = rag_results["manufacturer"] if manufacturer is None else manufacturer
         additional_rag_details = rag_results["additional_details"]
         additional_details = {**additional_visual_details, **additional_rag_details}
+
+        st.success("✅ Especificações da máquina encontradas com sucesso!")
 
         with st.container():
             st.subheader("📋 Especificações gerais da máquina")
@@ -111,13 +116,12 @@ if st.button("Atualizar Ficha Técnica"):
 
         with st.container():
             st.subheader("🔧 Especificações Técnicas Adicionais")
-            infos_to_print.append("🔧 Especificações Técnicas Adicionais")
-            cols = st.columns(2)
-            for i, (key, value) in enumerate(additional_details.items()):
-                add_info: str = f"**{key}:** {value}"
-                cols[i % 2].write(add_info)
-                add_info += '\n'
-                infos_to_print.append(add_info)
+            
+            # Convertendo o dicionário para um DataFrame do Pandas
+            df = pd.DataFrame(list(additional_details.items()), columns=["Especificação", "Valor"])
+            
+            # Exibindo a tabela
+            st.table(df)
     else:
         st.error("Por favor, faça o upload de pelo menos uma imagem.")
 
