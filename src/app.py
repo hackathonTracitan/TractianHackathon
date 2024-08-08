@@ -2,12 +2,17 @@ import streamlit as st
 import json 
 from typing import List, Dict, Optional
 from io import BytesIO
+from PIL import Image
 from services.query_generator import call_openai_ai_pipeline
 from services.report_generator import generate_report_file
 from services.rag import perform_rag
 from services.search import do_query
 from services.scraper import scrape_text_from_links
 import pandas as pd
+
+# Util function
+def resize_image(image: Image.Image, size=(150, 150)) -> Image.Image:
+    return image.resize(size)
 
 # Configuração da página
 st.set_page_config(page_title="Informações da Máquina", page_icon="📊", layout="wide")
@@ -42,6 +47,12 @@ machine_type: str = st.selectbox("Tipo de Máquina", ["Motor", "Compressor", "Ge
 machine_description: str = st.text_area("Descrição da Máquina (opcional)")
 st.subheader("Imagens da Máquina")
 uploaded_files: Optional[List[BytesIO]] = st.file_uploader("Escolha as imagens", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+st.subheader("🔍 Imagens da Máquina")
+if uploaded_files is not None and len(uploaded_files) > 0:
+    for file in uploaded_files:
+        image = Image.open(file)
+        thumbnail = resize_image(image)
+        st.image(thumbnail, caption=file.name, use_column_width=False, width=150)
 
 # Criação dos placeholders
 info_placeholder = st.empty()
