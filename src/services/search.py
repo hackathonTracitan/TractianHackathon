@@ -48,7 +48,8 @@ def do_query(query: str) -> list:
         "q": query,
         "location": "Brazil",
         "gl": "br",
-        "hl": "pt-br"
+        "hl": "pt-br",
+        "num": 5,
     })
 
     CONN.request("POST", "/search", payload, HEADERS)
