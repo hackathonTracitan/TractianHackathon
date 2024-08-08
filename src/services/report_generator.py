@@ -7,7 +7,9 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches
 
-def generate_report_file(messages: list) -> bytes:
+import pandas as pd
+
+def generate_report_file(messages: list, df: pd.DataFrame) -> bytes:
     """Converts a chat to a Word document and returns the document as a byte string."""
 
     document = Document()
@@ -34,6 +36,16 @@ def generate_report_file(messages: list) -> bytes:
 
     for message in messages:
         p.add_run(message)
+
+    t = document.add_table(df.shape[0]+1, df.shape[1])
+    # add the header rows.
+    for j in range(df.shape[-1]):
+        t.cell(0,j).text = df.columns[j]
+
+    # add the rest of the data frame
+    for i in range(df.shape[0]):
+        for j in range(df.shape[-1]):
+            t.cell(i+1,j).text = str(df.values[i,j])
 
     word_file_io = BytesIO()
     document.save(word_file_io)
