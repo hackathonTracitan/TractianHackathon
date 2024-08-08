@@ -1,9 +1,14 @@
 import http.client
 import json
+import os
+from dotenv import load_dotenv
 
 CONN = http.client.HTTPSConnection("google.serper.dev")
+
+load_dotenv()
+
 HEADERS = {
-  'X-API-KEY': 'ce34436514015496ffd5664d978e68c8b8302efb',
+  'X-API-KEY': os.getenv('SERPER_KEY'),
   'Content-Type': 'application/json'
 }
 

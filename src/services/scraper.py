@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from io import BytesIO
 from PyPDF2 import PdfReader
+from search import do_query
 
 # Cabeçalhos HTTP para simular um usuário real acessando a página
 headers = {
@@ -44,9 +45,7 @@ def scrape_text_from_links(links):
     return all_texts
 
 # Exemplo de uso:
-links = [
-    'https://mesindustrial.com.br/fornecedores/weg/mes-industrial-weg-guia-de-especificacao-de-motores-eletricos-50032749-manual-portugues-br.pdf'
-]
+links = do_query("Daniel Hosomi")
 
 text_data = scrape_text_from_links(links)
 
