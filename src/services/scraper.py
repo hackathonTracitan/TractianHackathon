@@ -43,12 +43,3 @@ def scrape_text_from_links(links):
         text = extract_text_from_url(link)
         all_texts.append(text)
     return all_texts
-
-# Exemplo de uso:
-links = do_query("Daniel Hosomi")
-
-text_data = scrape_text_from_links(links)
-
-# Exibindo os textos extraídos
-for idx, text in enumerate(text_data):
-    print(f"Texto extraído do link {idx + 1}:\n{text}\n{'-'*50}")

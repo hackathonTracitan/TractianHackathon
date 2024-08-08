@@ -1,32 +1,34 @@
 from openai import OpenAI
 
-# Defina sua chave de API da OpenAI aqui
-openai.api_key = 'sua-chave-api'
+from dotenv import load_dotenv
 
-def generate_machine_specifications(query, results):
-    # Prepara o prompt para o ChatGPT
-    prompt = f"""
-    Você é um assistente especializado em engenharia de máquinas. 
-    Eu tenho uma consulta sobre a seguinte máquina: {query}.
-    Aqui está uma lista de informações e resultados relacionados:
-    
-    {results}
-    
-    Com base nessas informações, você pode gerar as especificações detalhadas para essa máquina?
-    """
+from ..prompts import GENERATE_SPECIFICATION_PROMPT
 
-    # Chama o ChatGPT para gerar as especificações
-    response = openai.Completion.create(
-        engine="gpt-4o",  # ou outro modelo mais recente, se disponível
-        prompt=prompt,
-        max_tokens=500,  # Ajuste conforme necessário
-        temperature=0.7,
-        n=1,
-        stop=None
+# Load environment variables from .env
+load_dotenv()
+
+def generate_machine_specifications(
+    search_query,
+    text_data,
+    power,
+    voltage, 
+    frequency,
+    model,
+    manufacturer
+    ):
+    
+    prompt = GENERATE_SPECIFICATION_PROMPT.format(search_query=search_query, text_data=text_data)
+
+    client = OpenAI()
+
+    response = client.chat.completions.create(
+      model="gpt-4o",
+      messages=[
+        {"role": "system", "content": prompt}
+      ]
     )
 
-    # Extrai o texto gerado
-    specifications = response.choices[0].text.strip()
+    specifications = response.choices[0].message.content.strip()
     
     return specifications
 
