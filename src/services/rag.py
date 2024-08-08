@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 
 from ..prompts import RAG_PROMPT
+from prompts import GENERATE_SPECIFICATION_PROMPT
 
 # Load environment variables from .env
 load_dotenv()
@@ -16,26 +17,22 @@ def perform_rag(
     text_data
     ):
 
-    prompt = GENERATE_SPECIFICATION_PROMPT.format(search_query=search_query, text_data=text_data)
+    prompt = RAG_PROMPT.format(search_query=search_query, text_data=text_data)
 
     client = OpenAI()
 
     response = client.chat.completions.create(
-      model="gpt-4o-2024-08-06",
+      model="gpt-4o",
       messages=[
         {"role": "system", "content": prompt}
       ],
     )
 
-    print(response)
-
     specifications = response.choices[0].message.content
 
-
-    
     return specifications
 
-# Exemplo de uso
+#Exemplo de uso
 query = "Motor Elétrico Trifásico de 40 CV"
 results = """
 1. Potência: 40 CV (30 kW)

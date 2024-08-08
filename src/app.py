@@ -1,5 +1,7 @@
 import streamlit as st
 import json 
+from typing import List, Dict, Optional
+from io import BytesIO
 from services.query_generator import call_openai_ai_pipeline
 from services.report_generator import generate_report_file
 from services.rag import generate_machine_specifications
@@ -32,33 +34,36 @@ st.markdown("""
 # Título
 st.title("📊 Informações da Máquina")
 
-
 st.subheader("Detalhes da Máquina")
 
-machine_name = st.text_input("Nome da Máquina")
-machine_type = st.selectbox("Tipo de Máquina", ["Motor", "Compressor", "Gerador", "Bomba"])
-machine_description = st.text_area("Descrição da Máquina")
+machine_name: str = st.text_input("Nome da Máquina")
+machine_type: str = st.selectbox("Tipo de Máquina", ["Motor", "Compressor", "Gerador", "Bomba"])
+machine_description: str = st.text_area("Descrição da Máquina")
 st.subheader("Imagens da Máquina")
-uploaded_files = st.file_uploader("Escolha as imagens", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+uploaded_files: Optional[List[BytesIO]] = st.file_uploader("Escolha as imagens", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+
 # Botão de atualização
 if st.button("Atualizar Ficha Técnica"):
 
+    infos_to_print: List[str] = []
+
     if uploaded_files is not None:
-        visual_results = call_openai_ai_pipeline(uploaded_files)
+        visual_results: str = call_openai_ai_pipeline(uploaded_files)
         visual_results = visual_results.replace("```", "")
         visual_results = visual_results.replace("json", "")
-        visual_results = json.loads(visual_results)
+        visual_results_dict: Dict = json.loads(visual_results)
 
-        print(visual_results)
+        condition: str = visual_results_dict["conditions"]
+        search_query: str = visual_results_dict["search_query"]
+        additional_visual_details: Dict[str, str] = visual_results_dict["additional_details"]
+        power: str = visual_results_dict["power"]
+        frequency: str = visual_results_dict["frequency"]
+        voltage: str = visual_results_dict["voltage"]
+        model: str = visual_results_dict["model"]
+        manufacturer: str = visual_results_dict["manufacturer"]
 
-        condition = visual_results["conditions"]
-        search_query = visual_results["search_query"]
-        additional_visual_details = visual_results["additional_details"]
-        power = visual_results["power"],
-        frequency = visual_results["frequency"],
-        voltage = visual_results["voltage"],
-        model = visual_results["model"],
-        manufacturer = visual_results["manufacturer"]
+        search_links: List[str] = do_query(search_query)
+        text_data: str = scrape_text_from_links(search_links)
 
         search_links = do_query(search_query)
         text_data = scrape_text_from_links(search_links)
@@ -77,6 +82,7 @@ if st.button("Atualizar Ficha Técnica"):
         manufacturer = rag_results["manufacturer"] if manufacturer is None else manufacturer
         additional_rag_details = rag_results["additional_details"]
         additional_details = {**additional_visual_details, **additional_rag_details}
+        
         with st.container():
             st.subheader("📋 Especificações gerais da máquina")
             st.write(f"**Nome:** {machine_name}")
@@ -87,20 +93,33 @@ if st.button("Atualizar Ficha Técnica"):
             st.write(f"**Tensão:** {voltage}")
             st.write(f"**Frequência:** {frequency}")
             st.write(f"**Fabricante:** {manufacturer}")
+            
+            infos_to_print.append("📋 Especificações gerais da máquina\n")
+            infos_to_print.append(f"**Nome:** {machine_name}\n")
+            infos_to_print.append(f"**Tipo:** {machine_type}\n")
+            infos_to_print.append(f"**Modelo:** {model}\n")
+            infos_to_print.append(f"**Condição:** {condition}\n")
+            infos_to_print.append(f"**Potência:** {power}\n")
+            infos_to_print.append(f"**Tensão:** {voltage}\n")
+            infos_to_print.append(f"**Frequência:** {frequency}\n")
+            infos_to_print.append(f"**Fabricante:** {manufacturer}\n")
 
         with st.container():
             st.subheader("🔧 Especificações Técnicas Adicionais")
+            infos_to_print.append("🔧 Especificações Técnicas Adicionais")
             cols = st.columns(2)
-            for i, (key, value) in enumerate(additional_details.items()):
-                cols[i % 2].write(f"**{key}:** {value}")
-    
+            for i, (key, value) in enumerate(additional_visual_details.items()):
+                add_info: str = f"**{key}:** {value}"
+                cols[i % 2].write(add_info)
+                add_info += '\n'
+                infos_to_print.append(add_info)
     else:
         st.error("Por favor, faça o upload de pelo menos uma imagem.")
 
     st.write(
         "👇 Você pode baixar as especificações como um documento Word pelo botão abaixo"
     )
-    docx = generate_report_file("teste")
+    docx: bytes = generate_report_file(infos_to_print)
     st.download_button(
         "Baixar especificações como documento Word",
         docx,
