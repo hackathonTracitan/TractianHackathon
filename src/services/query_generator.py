@@ -1,8 +1,6 @@
 import base64
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
-
 from dotenv import load_dotenv
 import os
 
@@ -45,6 +43,7 @@ def call_openai_api(base64_image):
                 {
                 "type": "text",
                 "text": MACHINE_SPECIFICATION_PROMPT
+
                 },
                 {
                 "type": "image_url",

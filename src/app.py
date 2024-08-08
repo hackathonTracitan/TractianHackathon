@@ -1,6 +1,7 @@
 import streamlit as st
 from PIL import Image
 from services.query_generator import call_openai_ai_pipeline
+from services.report_generator import generate_report_file
 
 # Configuração da página
 st.set_page_config(page_title="Informações da Máquina", page_icon="📊", layout="wide")
@@ -70,6 +71,16 @@ if st.button("Atualizar Ficha Técnica"):
     
     else:
         st.error("Por favor, faça o upload de pelo menos uma imagem.")
+
+    st.write(
+        "👇 Você pode baixar as especificações como um documento Word pelo botão abaixo"
+    )
+    docx = generate_report_file("teste")
+    st.download_button(
+        "Baixar especificações como documento Word",
+        docx,
+        file_name="relatorio.docx",
+    )
 
 # Rodapé
 st.markdown("<hr>", unsafe_allow_html=True)
