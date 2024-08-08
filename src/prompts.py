@@ -1,12 +1,20 @@
 GENERATE_SPECIFICATION_PROMPT = """
     Você é um assistente especializado em engenharia de máquinas. 
-    Eu tenho uma consulta sobre a seguinte máquina: {query}.
+    Eu tenho uma consulta sobre a seguinte máquina: {search_query}.
     Aqui está uma lista de informações e resultados obtidos na interet, que podem ou não estar relacionados com a máquina em questão:
     
-    {results}
+    {text_results}
     
-    Com base nessas informações, você pode gerar as especificações detalhadas para essa máquina?
-"""# Prompt for analyzing machine specifications
+    Com base nessas informações, por favor, verifique se há informações relevantes sonbre a máquina em questão e, se sim, 
+    retorne as especificações técnicas da máquina. {required_specifications_instructions}
+
+    Lembre-se de utilizar apenas as informações retornadas da internet, sem usar o seu conhecimento interno.
+
+    A resposta deve ser no formato JSON da seguinte maneira:
+    /{nome da especificacao 1/: 'valor da especificacao 1', /nome da especificacao 2/: 'valor da especificacao 2', ...}
+
+"""
+
 MACHINE_SPECIFICATION_PROMPT = (
     "Você é um engenheiro mecânico trabalhando em uma fábrica e recebeu a tarefa de analisar as especificações de diferentes máquinas. "
     "Para isso, você deve examinar as imagens das máquinas e descrever cada uma delas em formato de string. Sua descrição deve incluir os seguintes detalhes:"

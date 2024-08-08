@@ -2,6 +2,9 @@ import streamlit as st
 from PIL import Image
 from services.query_generator import call_openai_ai_pipeline
 from services.report_generator import generate_report_file
+from services.specification_generator import generate_machine_specifications
+from services.search import do_query
+from services.scraper import scrape_text_from_links
 
 # Configuração da página
 st.set_page_config(page_title="Informações da Máquina", page_icon="📊", layout="wide")
@@ -41,31 +44,49 @@ uploaded_files = st.file_uploader("Escolha as imagens", type=["jpg", "jpeg", "pn
 if st.button("Atualizar Ficha Técnica"):
 
     if uploaded_files is not None:
-        results = call_openai_ai_pipeline(uploaded_files)
+
+        visual_results = call_openai_ai_pipeline(uploaded_files)
+
+        condition = visual_results["condition"]
+        search_query = visual_results["search_query"]
+        additional_visual_details = visual_results["additional_details"]
+
+        search_links = do_query(search_query)
+        text_data = scrape_text_from_links(search_links)
+
+        rag_results = generate_machine_specifications(
+            search_query,
+            text_data,
+            visual_results["power"],
+            visual_results["frequency"],
+            visual_results["voltage"],
+            visual_results["model"],
+            visual_results["manufacturer"]
+        )
+
+        power = rag_results["power"]
+        voltage = rag_results["voltage"]
+        frequency = rag_results["frequency"]
+        model = rag_results["model"]
+        manufacturer = rag_results["manufacturer"]
+        additional_rag_details = rag_results["additional_details"]
+        additional_details = {**additional_visual_details, **additional_rag_details}
 
         with st.container():
-            st.subheader("📋 Especificações da Máquina")
+            st.subheader("📋 Especificações gerais da máquina")
             st.write(f"**Nome:** {machine_name}")
             st.write(f"**Tipo:** {machine_type}")
-            st.write(f"**Descrição:** {machine_description}")
-            st.write("**Modelo:** Motor Elétrico Trifásico")
-            st.write("**Identificação:** 10009204")
-            st.write("**Fabricante:** WEG")
-            st.write("**Localização:** MOINHO 7")
-            st.write(results)
-        # Exibindo especificações técnicas
+            st.write(f"**Modelo:** {model}")
+            st.write(f"**Condição:** {condition}")
+            st.write(f"**Potência:** {power}")
+            st.write(f"**Tensão:** {voltage}")
+            st.write(f"**Frequência:** {frequency}")
+            st.write(f"**Fabricante:** {manufacturer}")
+
         with st.container():
-            st.subheader("🔧 Especificações Técnicas")
-            specs = {
-                "Potência": "40 CV (30 kW)",
-                "Tensão": "380V/660V (estimado)",
-                "Frequência": "60 Hz",
-                "Rotação": "1750 RPM (estimado)",
-                "Grau de Proteção": "IP55",
-                "Eficiência": "IE3 Premium (estimado)"
-            }
+            st.subheader("🔧 Especificações Técnicas Adicionais")
             cols = st.columns(2)
-            for i, (key, value) in enumerate(specs.items()):
+            for i, (key, value) in enumerate(additional_details.items()):
                 cols[i % 2].write(f"**{key}:** {value}")
     
     else:

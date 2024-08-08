@@ -7,9 +7,17 @@ from ..prompts import GENERATE_SPECIFICATION_PROMPT
 # Load environment variables from .env
 load_dotenv()
 
-def generate_machine_specifications(query, results):
+def generate_machine_specifications(
+    search_query,
+    text_data,
+    power,
+    voltage, 
+    frequency,
+    model,
+    manufacturer
+    ):
     
-    prompt = GENERATE_SPECIFICATION_PROMPT.format(query=query, results=results)
+    prompt = GENERATE_SPECIFICATION_PROMPT.format(search_query=search_query, text_data=text_data)
 
     client = OpenAI()
 
