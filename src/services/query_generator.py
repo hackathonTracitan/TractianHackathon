@@ -1,8 +1,10 @@
 import base64
 import requests
-
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dotenv import load_dotenv
 import os
+
+from prompts import *
 
 # Load environment variables from .env
 load_dotenv()
@@ -14,6 +16,17 @@ api_key = os.getenv('OPENAI_API_KEY')
 def encode_image(image):
     image_bytes = image.getvalue()
     return base64.b64encode(image_bytes).decode('utf-8')
+
+def get_response_openai_api(headers, payload):
+    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+
+    # Check for API response status
+    if response.status_code == 200:
+        return response.json()['choices'][0]['message']['content']
+    else:
+        print(f"Error {response.status_code}: {response.text}")
+        return None
+    
 
 def call_openai_api(base64_image):
     headers = {
@@ -29,9 +42,8 @@ def call_openai_api(base64_image):
             "content": [
                 {
                 "type": "text",
-                "text": "Analyze the image and describe the machine in string format. Include the following details: 1) 'specification' –\
-                ALL specifications of the machine possible found like motor, brand, voltage, rotations, 2) 'origin' – where the machine is from, and 3) 'answer' – a summary of this information in Portuguese.\
-                The response MUST be a single string following this structure: {specification: 'maximum specification', origin: 'country or place of origin', answer: 'summary in Portuguese'}."
+                "text": MACHINE_SPECIFICATION_PROMPT
+
                 },
                 {
                 "type": "image_url",
@@ -45,17 +57,38 @@ def call_openai_api(base64_image):
         "max_tokens": 500
         }
 
-    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+    return get_response_openai_api(headers, payload)
+    
+def summarize_results(results):
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
 
-    print(response.json())
+    payload = {
+        "model": "gpt-4o",
+        "messages": [
+            {
+                "role": "user",
+                "content": SUMMARY_PROMPT + " ".join(results)
+            }
+        ],
+        "max_tokens": 1000
+    }
 
-    return response.json()['choices'][0]['message']['content']
+    return get_response_openai_api(headers, payload)
 
 def call_openai_ai_pipeline(images):
+    base64_images = list(map(encode_image, images))
 
-    base64_images = map(encode_image, images)
     results = []
-    for image in base64_images:
-        results.append(call_openai_api(image))
-
-    print(results)
+    with ThreadPoolExecutor() as executor:
+        future_to_image = {executor.submit(call_openai_api, base64_image): base64_image for base64_image in base64_images}
+        for future in as_completed(future_to_image):
+            result = future.result()
+            results.append(result)
+    
+    summary = summarize_results(results)
+    if summary is None:
+        return "Não foi possível gerar um resumo das informações."
+    return summary
