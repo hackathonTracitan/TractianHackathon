@@ -2,25 +2,16 @@ from openai import OpenAI
 
 from pydantic import BaseModel
 
+import os
 
 from dotenv import load_dotenv
 
-from ..prompts import GENERATE_SPECIFICATION_PROMPT
+from ..prompts import RAG_PROMPT
 
 # Load environment variables from .env
 load_dotenv()
 
-class OutputFormat(BaseModel):
-    
-    additional_details: dict
-    power: str
-    frequency: str
-    voltage: str
-    model: str
-    manufacturer: str
-
-
-def generate_machine_specifications(
+def perform_rag(
     search_query,
     text_data
     ):
@@ -29,15 +20,18 @@ def generate_machine_specifications(
 
     client = OpenAI()
 
-    response = client.chat.completions.parse(
-      model="gpt-4o",
+    response = client.chat.completions.create(
+      model="gpt-4o-2024-08-06",
       messages=[
         {"role": "system", "content": prompt}
       ],
-      response_format=OutputFormat
     )
 
-    specifications = response.choices[0].message.parsed
+    print(response)
+
+    specifications = response.choices[0].message.content
+
+
     
     return specifications
 
@@ -52,6 +46,6 @@ results = """
 6. Eficiência: IE3 Premium
 """
 
-specifications = generate_machine_specifications(query, results)
+specifications = perform_rag(query, results)
 print("Especificações da Máquina Geradas pelo ChatGPT:\n")
 print(specifications)

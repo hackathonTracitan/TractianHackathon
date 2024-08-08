@@ -2,12 +2,7 @@ import streamlit as st
 import json 
 from services.query_generator import call_openai_ai_pipeline
 from services.report_generator import generate_report_file
-<<<<<<< Updated upstream
-
-from services.specification_generator import generate_machine_specifications
-=======
 from services.rag import generate_machine_specifications
->>>>>>> Stashed changes
 from services.search import do_query
 from services.scraper import scrape_text_from_links
 
@@ -72,6 +67,8 @@ if st.button("Atualizar Ficha Técnica"):
             search_query,
             text_data
         )
+        rag_results = rag_results.replace("```", "")
+        rag_results = rag_results.replace("json", "")
 
         power = rag_results["power"] if power is None else power
         frequency = rag_results["frequency"] if frequency is None else frequency
