@@ -39,7 +39,6 @@ st.subheader("Imagens da Máquina")
 uploaded_files = st.file_uploader("Escolha as imagens", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 # Botão de atualização
 if st.button("Atualizar Ficha Técnica"):
-    # Exibindo informações da máquina após o botão ser pressionado
 
     results = call_openai_ai_pipeline(uploaded_files)
 
@@ -47,11 +46,9 @@ if st.button("Atualizar Ficha Técnica"):
         st.subheader("📋 Especificações da Máquina")
         st.write(f"**Nome:** {machine_name}")
         st.write(f"**Tipo:** {machine_type}")
-        st.write(f"**Descrição:** {machine_description}")
-        st.write("**Modelo:** Motor Elétrico Trifásico")
+        st.write("**Modelo:** {model}")
         st.write("**Identificação:** 10009204")
         st.write("**Fabricante:** WEG")
-        st.write("**Localização:** MOINHO 7")
     # Exibindo especificações técnicas
     with st.container():
         st.subheader("🔧 Especificações Técnicas")
