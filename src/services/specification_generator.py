@@ -2,14 +2,14 @@ from openai import OpenAI
 
 from dotenv import load_dotenv
 
-from ..prompts import generate_specification_prompt
+from ..prompts import GENERATE_SPECIFICATION_PROMPT
 
 # Load environment variables from .env
 load_dotenv()
 
 def generate_machine_specifications(query, results):
     
-    prompt = generate_specification_prompt.format(query=query, results=results)
+    prompt = GENERATE_SPECIFICATION_PROMPT.format(query=query, results=results)
 
     client = OpenAI()
 
