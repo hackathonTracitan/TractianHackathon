@@ -109,7 +109,8 @@ def summarize_results(results: List[str]) -> Optional[str]:
                 "content": SUMMARY_PROMPT + " ".join(results)
             }
         ],
-        "max_tokens": 1000
+        "max_tokens": 1000,
+        "response_format": { "type": "json_object" }
     }
 
     return get_response_openai_api(headers, payload)
