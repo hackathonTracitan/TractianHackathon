@@ -1,14 +1,18 @@
-GENERATE_SPECIFICATION_PROMPT = """
+RAG_PROMPT = """
     Você é um assistente especializado em engenharia de máquinas. 
     Eu tenho uma consulta sobre a seguinte máquina: {search_query}.
     Aqui está uma lista de informações e resultados obtidos na internet, que podem ou não estar relacionados com a máquina em questão:
     
     {text_data}
     
-    Com base nessas informações, por favor, verifique se há informações relevantes sonbre a máquina em questão e, se sim, 
+    Com base nessas informações, por favor, verifique se há informações relevantes sobre a máquina em questão e, se sim, 
     retorne as especificações técnicas da máquina. 
 
     Lembre-se de utilizar apenas as informações retornadas da internet, sem usar o seu conhecimento interno. Não retorne informações que estejam ambíguas ou que não sejam relevantes para a máquina em questão.
+
+    Por favor, forneça as informações solicitadas para cada máquina no seguinte formato JSON (o exemplo abaixo contém valores fictícios):
+
+    {{power: '40 CV', voltage: '380V', frequency: '60 Hz', model: 'Motor Elétrico Trifásico', manufacturer: 'WEG', additional_details: {{ }} }}"
 
 """
 
